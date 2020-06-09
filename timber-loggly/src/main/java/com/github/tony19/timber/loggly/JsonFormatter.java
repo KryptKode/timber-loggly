@@ -17,6 +17,8 @@ package com.github.tony19.timber.loggly;
 
 import android.util.Log;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashMap;
@@ -52,9 +54,24 @@ class JsonFormatter implements IFormatter {
      */
     @Override
     public String format(int priority, String tag, String message, Throwable t) {
+        return format(priority, tag, message, t, null);
+    }
+
+
+    /**
+     * Gets the JSON representation of a log event
+     * @param priority log severity level
+     * @param tag correlating string
+     * @param message message to be logged
+     * @param t throwable (or null)
+     * @return JSON string
+     */
+    @Override
+    public String format(int priority, String tag, String message, Throwable t, @Nullable  String deviceId) {
         StringBuilder formatted = new StringBuilder();
         formatted.append("{");
         formatted.append("\"level\": \"").append(toLevel(priority)).append("\"");
+        appendDeviceId(formatted, deviceId);
         appendMessage(formatted, message);
         appendThrowable(formatted, t);
         formatted.append("}");
@@ -95,6 +112,25 @@ class JsonFormatter implements IFormatter {
                   .append("\"");
         }
     }
+
+    /**
+     * Appends a log ID to a string buffer
+     * The ids are prefixed with #ID:XXXX#
+     * where XXXX is the ID
+     * @param buffer stirng buffer to modify
+     * @param deviceId log deviceId to append to buffer (null ignored)
+     */
+    private void appendDeviceId(StringBuilder buffer, String deviceId) {
+        if (deviceId != null && deviceId.length() > 0) {
+            if (buffer.length() > 0) {
+                buffer.append(", ");
+            }
+            buffer.append("\"deviceId\": \"")
+                    .append(escape(deviceId))
+                    .append("\"");
+        }
+    }
+
 
     /**
      * Escapes illegal JSON characters with a slash. Intended for JSON values.
