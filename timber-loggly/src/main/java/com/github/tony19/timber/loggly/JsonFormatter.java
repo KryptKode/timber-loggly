@@ -97,6 +97,7 @@ class JsonFormatter implements IFormatter {
         }
     }
 
+
     /**
      * Appends a log message to a string buffer
      * @param buffer stirng buffer to modify
