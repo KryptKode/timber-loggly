@@ -1,1 +1,2 @@
-include ':timber-loggly', ':example'
+include ':timber-loggly'
+include ':example'
