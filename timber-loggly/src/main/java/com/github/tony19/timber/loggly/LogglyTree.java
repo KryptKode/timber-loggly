@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2015 Anthony K. Trinh
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,6 +17,8 @@ package com.github.tony19.timber.loggly;
 
 import com.github.tony19.loggly.ILogglyClient;
 import com.github.tony19.loggly.LogglyClient;
+
+import org.jetbrains.annotations.NotNull;
 
 import timber.log.Timber;
 
@@ -65,7 +67,7 @@ public class LogglyTree extends Timber.Tree {
      * @param t Accompanying exceptions. May be {@code null}, but then {@code message} will not be.
      */
     @Override
-    protected void log(int priority, String tag, String message, Throwable t) {
+    protected void log(int priority, String tag, @NotNull String message, Throwable t) {
         loggly.log(formatter.format(priority, tag, message, t), handler);
     }
 
@@ -82,6 +84,21 @@ public class LogglyTree extends Timber.Tree {
     protected void log(int priority, String tag, String message, Throwable t, String deviceId) {
         loggly.log(formatter.format(priority, tag, message, t, deviceId), handler);
     }
+
+
+    /**
+     * Writes a log message to its destination. Called for all level-specific methods by default.
+     *
+     * @param priority Log level. See {@link android.util.Log} for constants.
+     * @param tag Explicit or inferred tag. May be {@code null}.
+     * @param message Formatted log message. May be {@code null}, but then {@code t} will not be.
+     * @param t Accompanying exceptions. May be {@code null}, but then {@code message} will not be.
+     * @param  deviceId a string that identifies a device. it may be null
+     */
+    protected void log(int priority, String tag, String message, Throwable t, String deviceId, String appVersion) {
+        loggly.log(formatter.format(priority, tag, message, t, deviceId, appVersion), handler);
+    }
+
 
     /**
      * Sets the Loggly tag for all logs going forward

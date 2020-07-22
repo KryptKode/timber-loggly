@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2016 Anthony K. Trinh
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,7 +35,7 @@ class JsonFormatter implements IFormatter {
      * Constructs a formatter that creates a JSON object from log-event data
      */
     public JsonFormatter() {
-        LEVELS = new HashMap<Integer, String>();
+        LEVELS = new HashMap<>();
         LEVELS.put(Log.VERBOSE, "VERBOSE");
         LEVELS.put(Log.DEBUG, "DEBUG");
         LEVELS.put(Log.INFO, "INFO");
@@ -55,6 +55,28 @@ class JsonFormatter implements IFormatter {
     @Override
     public String format(int priority, String tag, String message, Throwable t) {
         return format(priority, tag, message, t, null);
+    }
+
+
+    /**
+     * Gets the JSON representation of a log event
+     * @param priority log severity level
+     * @param tag correlating string
+     * @param message message to be logged
+     * @param t throwable (or null)
+     * @return JSON string
+     */
+    @Override
+    public String format(int priority, String tag, String message, Throwable t, @Nullable  String deviceId, @Nullable  String appVersion) {
+        StringBuilder formatted = new StringBuilder();
+        formatted.append("{");
+        formatted.append("\"level\": \"").append(toLevel(priority)).append("\"");
+        appendDeviceId(formatted, deviceId);
+        appendAppVersion(formatted, appVersion);
+        appendMessage(formatted, message);
+        appendThrowable(formatted, t);
+        formatted.append("}");
+        return formatted.toString();
     }
 
 
@@ -116,8 +138,6 @@ class JsonFormatter implements IFormatter {
 
     /**
      * Appends a log ID to a string buffer
-     * The ids are prefixed with #ID:XXXX#
-     * where XXXX is the ID
      * @param buffer stirng buffer to modify
      * @param deviceId log deviceId to append to buffer (null ignored)
      */
@@ -128,6 +148,23 @@ class JsonFormatter implements IFormatter {
             }
             buffer.append("\"deviceId\": \"")
                     .append(escape(deviceId))
+                    .append("\"");
+        }
+    }
+
+
+    /**
+     * Appends the app version to a string buffer
+     * @param buffer stirng buffer to modify
+     * @param appVersion log deviceId to append to buffer (null ignored)
+     */
+    private void appendAppVersion(StringBuilder buffer, String appVersion) {
+        if (appVersion != null && appVersion.length() > 0) {
+            if (buffer.length() > 0) {
+                buffer.append(", ");
+            }
+            buffer.append("\"appVersion\": \"")
+                    .append(escape(appVersion))
                     .append("\"");
         }
     }

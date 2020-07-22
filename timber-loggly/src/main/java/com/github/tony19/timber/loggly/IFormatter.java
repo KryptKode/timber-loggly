@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2016 Anthony K. Trinh
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,6 +28,18 @@ public interface IFormatter {
      * @return the string
      */
     String format(int priority, String tag, String message, Throwable t);
+
+    /**
+     * Formats log events as a string
+     * @param priority log priority level
+     * @param tag correlating string
+     * @param message message to be logged
+     * @param t throwable (or null)
+     * @param deviceId an ID for the device
+     * @param appVersion the app version
+     * @return the string
+     */
+    String format(int priority, String tag, String message, Throwable t, String deviceId, String appVersion);
 
     /**
      * Formats log events as a string
